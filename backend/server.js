@@ -5,10 +5,11 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/auth.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import userRoutes from "./routes/user.routes.js";
-
+import {app} from "./socket/socket.js";
 import cookieParser from "cookie-parser";
+import {server} from './socket/socket.js';
 
-const app = express();
+
 const PORT = process.env.PORT || 5000;    // Either port value under the .env or 5000
 
 dotenv.config();
@@ -26,6 +27,6 @@ app.use("/api/users", userRoutes);
 // });
 
 
-app.listen(5000, ()=> {connectToMongoDB();
+server.listen(5000, ()=> {connectToMongoDB();
     console.log(`Server started on port ${PORT}`);
 });
