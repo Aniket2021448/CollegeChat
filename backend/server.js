@@ -1,3 +1,4 @@
+import path from "path";
 import express from "express"; // ES6 syntax
 import connectToMongoDB from "./db/connectToMongoDB.js";
 import dotenv from "dotenv";
@@ -12,6 +13,8 @@ import {server} from './socket/socket.js';
 
 const PORT = process.env.PORT || 5000;    // Either port value under the .env or 5000
 
+const __dirname = path.resolve()
+
 dotenv.config();
 
 app.use(cookieParser()); // middleware to access the cookie used in protectRoute.js
@@ -21,10 +24,13 @@ app.use("/api/auth", authRoutes);       // authentication routes server -> auth.
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
 
-// app.get("/", (req, res) => {
-    // root route http://localhost:5000/
-//     res.send("Hello world, Server is running.... shit!");
-// });
+app.use(express.static(path.join(__dirname, "/frontend/dist"))); // serve static files
+
+app.get("*", (req, res) =>{
+    res.sendFile(path.join(__dirname, "frontend","dist","index.html"));
+})
+
+
 
 
 server.listen(5000, ()=> {connectToMongoDB();
