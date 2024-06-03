@@ -70,4 +70,47 @@ const getMessage = async (req, res) => {
 };
 
 
-export { sendMessage, getMessage }; // Exporting both functions
+// message.controller.js
+
+
+
+// Adding delete functionality,if does not work delete it
+const deleteMessage = async (req, res) => {
+    const messageId = req.params.id;
+    const userId = req.user.id;
+
+    try {
+        // Find the message
+        const message = await Message.findById(messageId);
+
+
+        // Check if the message exists and if the current user is authorized to delete it
+        if (!message || message.senderId.toString() !== userId) {
+            return res.status(403).json({ message: "You are not authorized to delete this message" });
+        }
+
+        // // Delete the message from the sender's conversation
+        // await Conversation.findOneAndUpdate(
+        //     { participants: userId, messages: messageId },
+        //     { $pull: { messages: messageId } }
+        // );
+
+        // // Delete the message from the receiver's conversation
+        // await Conversation.findOneAndUpdate(
+        //     { participants: message.receiverId, messages: messageId },
+        //     { $pull: { messages: messageId } }
+        // );
+
+        // // Finally, delete the message
+        // await Message.findByIdAndDelete(messageId);
+
+        return res.status(200).json({ message: "Message deleted for everyone" });
+    } catch (error) {
+        console.error("Error deleting message:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+
+
+export { sendMessage, getMessage, deleteMessage }; // Exporting both functions

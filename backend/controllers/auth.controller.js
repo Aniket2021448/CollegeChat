@@ -64,40 +64,34 @@ export const signup = async (req, res) => {
     }
 }
 
+export const login = async (req, res) => {
+    try {
+        console.log("Body came from frontend in backend", req.body);
+        
+        const { userName, password } = req.body;
+        const existingUser = await User.findOne({ userName });
+        
+        console.log("From user controller in backend: ", existingUser);
 
-export const login = async(req, res) => {
-    try{
-        const {userName, password} = req.body;
-        const existingUser = await User.findOne({userName});
-        
-        
-        // user exists in database, check his password
-        if(existingUser){
+        if (existingUser) {
             const isPasswordCorrect = await bcryptjs.compare(password, existingUser.password);
-            if(isPasswordCorrect){
-                // password matches
+            if (isPasswordCorrect) {
                 await generateTokenAndSetCookie(existingUser._id, res);
-                res.status(200).json({
+                return res.status(200).json({
                     _id: existingUser._id,
                     fullName: existingUser.fullName,
                     userName: existingUser.userName,
                     profilePicture: existingUser.profilePicture,
                 });
+            } else {
+                return res.status(400).json({ error: "Invalid password credentials" });
             }
-
-            else{
-                // password does not match
-                return res.status(400).json({error: "Invalid password credentials"});
-            }
-        }  
-        else{
-            return res.status(400).json({error: "Invalid user name credentials"});
+        } else {
+            return res.status(400).json({ error: "Invalid user name credentials" });
         }
-    }
-
-    catch(error){
+    } catch (error) {
         console.log("Error on login controller", error.message);
-        res.send(500).json({error: "Internal server error"});
+        return res.status(500).json({ error: "Internal server error" });
     }
 }
 
