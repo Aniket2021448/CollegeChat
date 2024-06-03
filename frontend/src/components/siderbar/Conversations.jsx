@@ -6,17 +6,17 @@ import { getRandomEmoji } from "../../utils/emojis";
 import Conversation from "./Conversation";
 
 const Conversations = () => {
-	const { loading, conversations } = useGetConversations();
+	const { loading, conversations, friends } = useGetConversations();
 	
 	return (
 		<div className='py-2 flex flex-col overflow-auto'>
-			{conversations.map((conversation, idx) => (
-				<Conversation
-					key={conversation._id}
-					conversation={conversation}
-					emoji={getRandomEmoji()}
-					lastIdx={idx === conversations.length - 1}
-				/>
+			{friends.map((friend, idx) => (
+                <Conversation
+                    key={friend._id}
+                    conversation={friend}
+                    emoji={getRandomEmoji()}
+                    lastIdx={idx === friends.length - 1}
+                />
 			))}
 
 			{loading ? <span className='loading loading-spinner mx-auto'></span> : null}
